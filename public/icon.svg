@@ -1,0 +1,50 @@
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+    <defs>
+      <radialGradient id="sqBg" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="#1e1b4b"/>
+        <stop offset="60%" stop-color="#0f172a"/>
+        <stop offset="100%" stop-color="#020617"/>
+      </radialGradient>
+      <linearGradient id="sqGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00d2ff"/>
+        <stop offset="40%" stop-color="#0070ba"/>
+        <stop offset="100%" stop-color="#4f46e5"/>
+      </linearGradient>
+      <linearGradient id="sqGrad2" x1="0%" y1="0%" x2="100%" y2="80%">
+        <stop offset="0%" stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#1d4ed8"/>
+      </linearGradient>
+      <filter id="sqGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="12" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+    </defs>
+    <rect width="512" height="512" rx="110" fill="url(#sqBg)"/>
+    <rect width="504" height="504" x="4" y="4" rx="106" fill="none" stroke="#334155" stroke-width="2" opacity="0.6"/>
+    
+    <g transform="translate(256, 230) scale(1.4)">
+      <!-- Outer Shield / Doc -->
+      <path d="M-90,-120 L50,-120 C70,-120 90,-100 90,-80 L90,60 C90,120 0,160 0,160 C0,160 -90,120 -90,60 Z" 
+            fill="#1e293b" stroke="url(#sqGrad1)" stroke-width="3" opacity="0.75"/>
+      <!-- Lines -->
+      <rect x="-60" y="-70" width="60" height="7" rx="3.5" fill="#64748b" opacity="0.5"/>
+      <rect x="-60" y="-48" width="80" height="7" rx="3.5" fill="#64748b" opacity="0.5"/>
+      <!-- Airplane -->
+      <polygon points="-80,-60 110,-10 -10,20 -30,80" fill="url(#sqGrad1)"/>
+      <polygon points="-80,-60 110,-10 -10,20" fill="url(#sqGrad2)"/>
+      <polygon points="-80,-60 110,-10 -30,0" fill="#38bdf8" opacity="0.9"/>
+      <!-- Trail -->
+      <path d="M-80,-60 Q-150,-100 -200,-40" stroke="#00d2ff" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#sqGlow)"/>
+      <!-- Checkmark -->
+      <g transform="translate(45, 65)">
+        <circle cx="0" cy="0" r="28" fill="#0f172a" stroke="#10b981" stroke-width="3"/>
+        <path d="M-10,-1 L-3,6 L12,-9" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+    
+    <text x="256" y="445" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="900" letter-spacing="-1">
+      <tspan fill="#ffffff">Invoice</tspan><tspan fill="#38bdf8">Pilot</tspan>
+    </text>
+  </svg>
+  
