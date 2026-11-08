@@ -61,11 +61,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Demo User Pill */}
           <div className="hidden md:flex items-center gap-2.5 pl-3 border-l border-slate-200">
             <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">
-              AR
+              VV
             </div>
             <div className="text-left">
-              <p className="text-xs font-semibold text-slate-800 leading-tight">Alex Rivera</p>
-              <p className="text-[10px] text-slate-500 leading-tight">Rivera Creative Studio</p>
+              <p className="text-xs font-semibold text-slate-800 leading-tight">Vijay Viswa</p>
+              <p className="text-[10px] text-slate-500 leading-tight">Software Developer</p>
             </div>
           </div>
         </div>

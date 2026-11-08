@@ -41,7 +41,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hello Alex! I'm **InvoicePilot**, your AI billing agent.\n\nTell me what you'd like to invoice or ask about your receivables in plain English (e.g., *'Invoice Acme Corp $800 for branding, due in 14 days'* or *'Who hasn't paid me yet?'*).\n\n🔒 **Safety Guarantee**: I only draft proposals—I will **never** send an invoice or move money without your explicit one-click approval.",
+        "Hello Vijay! I'm **InvoicePilot**, your AI billing agent.\n\nTell me what you'd like to invoice or ask about your receivables in plain English (e.g., *'Invoice Acme Corp $800 for branding, due in 14 days'* or *'Who hasn't paid me yet?'*).\n\n🔒 **Safety Guarantee**: I only draft proposals—I will **never** send an invoice or move money without your explicit one-click approval.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);

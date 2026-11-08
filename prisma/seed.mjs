@@ -17,12 +17,15 @@ async function main() {
   // 1. Demo User
   const demoUser = await prisma.user.upsert({
     where: { email: 'demo@invoicepilot.dev' },
-    update: {},
+    update: {
+      name: 'Vijay Viswa',
+      businessName: 'Software Developer',
+    },
     create: {
       id: 'demo-user-id',
       email: 'demo@invoicepilot.dev',
-      name: 'Alex Rivera',
-      businessName: 'Rivera Creative Studio',
+      name: 'Vijay Viswa',
+      businessName: 'Software Developer',
       currency: 'USD',
     },
   });
