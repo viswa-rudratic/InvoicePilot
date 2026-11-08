@@ -208,19 +208,24 @@ export async function approveProposal(
   proposalId: string,
   userId: string
 ): Promise<{ approvalId: string; status: string }> {
-  // Find latest approval record awaiting user
+  // Find latest approval record awaiting user or already pending
   const approval = await prisma.approvalRecord.findFirst({
     where: {
       proposalId,
       userId,
       kind: 'INVOICE',
-      status: 'AWAITING_USER',
+      status: { in: ['AWAITING_USER', 'PENDING'] },
     },
     orderBy: { createdAt: 'desc' },
   });
 
   if (!approval) {
     throw new Error('No pending approval awaiting user confirmation found for this proposal.');
+  }
+
+  // If already PENDING, return it idempotently
+  if (approval.status === 'PENDING') {
+    return { approvalId: approval.id, status: approval.status };
   }
 
   // Verify amount cap against snapshot

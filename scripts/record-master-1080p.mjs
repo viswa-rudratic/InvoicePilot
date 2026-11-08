@@ -155,16 +155,18 @@ async function recordMasterDemo() {
       const box = await quickPill.boundingBox();
       if (box) {
         await smoothMouseMove(page, 1300, 720, box.x + box.width / 2, box.y + box.height / 2, 20, 700);
-        await delay(1000);
-        await page.mouse.down();
-        await delay(120);
-        await page.mouse.up();
+        await delay(500);
       }
+      await quickPill.click();
+    } else {
+      await page.fill('textarea', 'Invoice Acme Corp $800 for logo design, due in 14 days');
+      await delay(400);
+      await page.locator('textarea').press('Enter');
     }
 
     // Wait for pulsating loading bubble
-    await delay(4000);
-    await page.waitForSelector('text=Invoice Proposal (Preview)', { timeout: 30000 });
+    console.log('⏳ Waiting for proposal to render...');
+    await page.waitForSelector('text=Invoice Proposal (Preview)', { timeout: 45000 });
     console.log('  ✓ Proposal generated smoothly!');
     await delay(4500);
 
@@ -194,14 +196,12 @@ async function recordMasterDemo() {
     const tBox = await tamperBtn.boundingBox();
     if (tBox) {
       await smoothMouseMove(page, 1580, 620, tBox.x + tBox.width / 2, tBox.y + tBox.height / 2, 25, 800);
-      await delay(1200);
-      await page.mouse.down();
-      await delay(120);
-      await page.mouse.up();
+      await delay(600);
     }
+    await tamperBtn.click();
 
     // Wait for red refusal banner to appear and shake
-    await page.waitForSelector('text=Tamper Refusal Verification', { timeout: 15000 });
+    await page.waitForSelector('text=Tamper Refusal Verification', { timeout: 25000 });
     console.log('  ✓ Tamper refusal verified on screen!');
     await delay(6500);
 
@@ -212,13 +212,11 @@ async function recordMasterDemo() {
     const aBox = await auditBtn.boundingBox();
     if (aBox) {
       await smoothMouseMove(page, tBox ? tBox.x : 1300, tBox ? tBox.y : 600, aBox.x + aBox.width / 2, aBox.y + aBox.height / 2, 30, 900);
-      await delay(800);
-      await page.mouse.down();
-      await delay(120);
-      await page.mouse.up();
+      await delay(600);
     }
+    await auditBtn.click();
 
-    await page.waitForSelector('text=Governance & Security Audit Trail', { timeout: 10000 });
+    await page.waitForSelector('text=Governance & Security Audit Trail', { timeout: 15000 });
     await delay(3500);
 
     // Switch to PayPal REST API Logs tab
@@ -228,9 +226,9 @@ async function recordMasterDemo() {
       if (apiBox) {
         await smoothMouseMove(page, aBox.x, aBox.y + 100, apiBox.x + apiBox.width / 2, apiBox.y + apiBox.height / 2, 20, 600);
         await delay(600);
-        await apiTab.click();
-        await delay(2500);
       }
+      await apiTab.click();
+      await delay(2500);
     }
 
     // Close Audit Modal
@@ -247,11 +245,9 @@ async function recordMasterDemo() {
     const appBox = await approveBtn.boundingBox();
     if (appBox) {
       await smoothMouseMove(page, 960, 540, appBox.x + appBox.width / 2, appBox.y + appBox.height / 2, 25, 800);
-      await delay(1000);
-      await page.mouse.down();
-      await delay(120);
-      await page.mouse.up();
+      await delay(600);
     }
+    await approveBtn.click();
 
     // Wait for PayPal dispatch to complete
     console.log('⏳ Awaiting PayPal Sandbox Invoicing API v2 response...');
@@ -271,18 +267,16 @@ async function recordMasterDemo() {
       const rBox = await remindBtn.boundingBox();
       if (rBox) {
         await smoothMouseMove(page, 450, 420, rBox.x + rBox.width / 2, rBox.y + rBox.height / 2, 25, 800);
-        await delay(800);
-        await remindBtn.click();
-        await delay(1500);
-
-        // Click send on chat to generate reminder draft
-        const sendBtn = page.locator('button:has(svg.lucide-send)');
-        if (await sendBtn.isVisible()) {
-          await sendBtn.click();
-          await page.waitForSelector('text=Payment Reminder Draft', { timeout: 30000 });
-          await delay(4000);
-        }
+        await delay(600);
       }
+      await remindBtn.click();
+      await delay(1200);
+
+      // Press Enter in chat to submit the auto-filled reminder request
+      await page.locator('textarea').press('Enter');
+      await page.waitForSelector('text=Payment Reminder Draft', { timeout: 35000 });
+      console.log('  ✓ Payment reminder draft rendered successfully!');
+      await delay(4500);
     }
 
     // Final smooth pan up to the brand and stats

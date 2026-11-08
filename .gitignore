@@ -21,6 +21,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Videos
+videos/*.webm
+
 # OS Files
 .DS_Store
 Thumbs.db
