@@ -1,0 +1,143 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String            @id @default(uuid())
+  email         String            @unique
+  name          String
+  businessName  String
+  currency      String            @default("USD")
+  proposals     InvoiceProposal[]
+  approvals     ApprovalRecord[]
+  invoices      Invoice[]
+  clients       ClientMemory[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime          @default(now())
+}
+
+model ClientMemory {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  name               String
+  email              String
+  standardRateCents  Int?     // Integer minor units
+  currency           String   @default("USD")
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, email])
+}
+
+model InvoiceProposal {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id])
+  clientName         String
+  clientEmail        String
+  itemsJson          String           // JSON: [{ name, quantity, unitAmountCents, description }]
+  totalAmountCents   Int              // Sum computed deterministically from items
+  totalAmountStr     String           // "25.00"
+  currency           String           @default("USD")
+  dueDate            String           // YYYY-MM-DD
+  notes              String?
+  status             String           @default("PENDING_APPROVAL")
+  
+  approvals          ApprovalRecord[]
+  invoice            Invoice?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+model ApprovalRecord {
+  id                 String           @id @default(uuid())
+  proposalId         String?
+  proposal           InvoiceProposal? @relation(fields: [proposalId], references: [id])
+  invoiceId          String?          // Linked invoice for kind === REMINDER
+  invoice            Invoice?         @relation(fields: [invoiceId], references: [id])
+  userId             String
+  user               User             @relation(fields: [userId], references: [id])
+  
+  kind               String           // "INVOICE" | "REMINDER"
+  payloadHash        String           // SHA-256 of canonical snapshot
+  payloadSnapshot    String           // Exact JSON string sent to PayPal
+  maxAmountApprovedCents Int          // Integer minor units
+  
+  // Status machine: AWAITING_USER -> PENDING -> IN_PROGRESS -> USED | FAILED | REVOKED | TAMPERED
+  status             String           @default("AWAITING_USER")
+  
+  // Idempotency keys (invoice create/send vs reminder operation)
+  createRequestId    String?          // Generated for INVOICE
+  sendRequestId      String?          // Generated for INVOICE
+  operationRequestId String?          // Generated for REMINDER
+  
+  paypalInvoiceId    String?          // Tracked draft ID
+  
+  claimedAt          DateTime?
+  usedAt             DateTime?
+  approvedAt         DateTime?        // null until explicit user approval
+  createdAt          DateTime         @default(now())
+}
+
+model Invoice {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id])
+  proposalId         String?          @unique
+  proposal           InvoiceProposal? @relation(fields: [proposalId], references: [id])
+  
+  recordType         String           // "PAYPAL_SYNCED" | "LOCAL_DEMO"
+  paypalInvoiceId    String?          @unique
+  invoiceNumber      String
+  status             String           // DRAFT, SENT, UNPAID, PAID, MARKED_AS_PAID, etc.
+  
+  clientName         String
+  clientEmail        String
+  itemsJson          String
+  totalAmountCents   Int
+  totalAmountStr     String           // "25.00"
+  currency           String           @default("USD")
+  dueDate            String           // YYYY-MM-DD
+  invoiceDate        String           // YYYY-MM-DD
+  
+  recipientViewUrl   String?
+  invoicerViewUrl    String?
+  notes              String?
+  
+  reminderCount      Int              @default(0)
+  lastRemindedAt     DateTime?
+  
+  approvals          ApprovalRecord[]
+  lastSyncedAt       DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String   // PROPOSAL_CREATED, APPROVAL_GRANTED, APPROVAL_CLAIMED, DRAFT_CREATED, INVOICE_SENT, REMINDER_SENT, TAMPER_ATTEMPT
+  entityType  String   // Proposal, Invoice, ApprovalRecord
+  entityId    String
+  detailsJson String?  // Redacted details
+  createdAt   DateTime @default(now())
+}
+
+model PayPalApiLog {
+  id           String   @id @default(uuid())
+  endpoint     String
+  method       String
+  requestId    String
+  statusCode   Int
+  durationMs   Int
+  errorMessage String?  // Redacted error details
+  createdAt    DateTime @default(now())
+}
